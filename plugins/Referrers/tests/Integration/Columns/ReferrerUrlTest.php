@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Matomo - free/libre analytics platform
  *
@@ -53,10 +54,10 @@ class ReferrerUrlTest extends IntegrationTestCase
         parent::tearDown();
     }
 
-    public function test_onNewVisit_shouldTrimReferUrl()
+    public function testOnNewVisitShouldTrimReferUrl()
     {
         Config::getInstance()->Tracker['page_maximum_length'] = ReferrerUrl::MAX_LEN + 100;
-        $refUrl = 'http://example.org/foo/bar'. str_pad('r', ReferrerUrl::MAX_LEN, 'r');
+        $refUrl = 'http://example.org/foo/bar' . str_pad('r', ReferrerUrl::MAX_LEN, 'r');
         $this->assertGreaterThan(ReferrerUrl::MAX_LEN, strlen($refUrl));
         $request = $this->getRequest(['idsite' => $this->idSite1, 'url' => 'http://piwik.org/foo/bar', 'urlref' => $refUrl]);
         $detectedUrl = $this->referrerUrl->onNewVisit($request, $this->getNewVisitor(), $action = null);
@@ -68,7 +69,7 @@ class ReferrerUrlTest extends IntegrationTestCase
     /**
      * @dataProvider getReferrerUrls
      */
-    public function test_onNewVisit_shouldDetectCorrectReferrerUrl($referrerUrl, $expectedUrl)
+    public function testOnNewVisitShouldDetectCorrectReferrerUrl($referrerUrl, $expectedUrl)
     {
         $request = $this->getRequest(['idsite' => $this->idSite1, 'url' => 'http://piwik.org/foo/bar', 'urlref' => $referrerUrl]);
         $detectedUrl = $this->referrerUrl->onNewVisit($request, $this->getNewVisitor(), $action = null);
@@ -113,7 +114,6 @@ class ReferrerUrlTest extends IntegrationTestCase
 
     private function getNewVisitor()
     {
-        return new Visitor(new VisitProperties());
+        return new Visitor(new VisitProperties(), false, new VisitProperties());
     }
-
 }

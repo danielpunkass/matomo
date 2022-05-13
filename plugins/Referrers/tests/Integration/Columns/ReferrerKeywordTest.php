@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Matomo - free/libre analytics platform
  *
@@ -49,9 +50,9 @@ class ReferrerKeywordTest extends IntegrationTestCase
     /**
      * @dataProvider getReferrerUrls
      */
-    public function test_onNewVisit_shouldDetectCorrectReferrerType($expectedType, $idSite, $url, $referrerUrl)
+    public function testOnNewVisitShouldDetectCorrectReferrerType($expectedType, $idSite, $url, $referrerUrl)
     {
-        $request = $this->getRequest(array('idsite' => $idSite, 'url' => $url, 'urlref' => $referrerUrl));
+        $request = $this->getRequest(['idsite' => $idSite, 'url' => $url, 'urlref' => $referrerUrl]);
         $type = $this->keyword->onNewVisit($request, $this->getNewVisitor(), $action = null);
 
         $this->assertSame($expectedType, $type);
@@ -67,40 +68,40 @@ class ReferrerKeywordTest extends IntegrationTestCase
         $noReferrerKeyword = null;
         $emptyReferrerKeyword = '';
 
-        return array(
+        return [
             // website referrer types usually do not have a keyword
-            array($noReferrerKeyword, $this->idSite1, $url, $externalReferrer),
+            [$noReferrerKeyword, $this->idSite1, $url, $externalReferrer],
             // direct entries do usually not have a referrer keyowrd
-            array($noReferrerKeyword, $this->idSite1, $url, $directReferrer),
+            [$noReferrerKeyword, $this->idSite1, $url, $directReferrer],
 
             // it is a campaign but there is no referrer url and no keyword set specifically, we cannot detect a keyword
             // it does not return null as it is converted to strlower(null)
-            array($emptyReferrerKeyword, $this->idSite1, $url . '?pk_campaign=test', $noReferrer),
+            [$emptyReferrerKeyword, $this->idSite1, $url . '?pk_campaign=test', $noReferrer],
 
             // campaigns, coming from same domain should have a keyword
-            array('piwik.org',     $this->idSite1, $url . '?pk_campaign=test', $directReferrer),
+            ['piwik.org',     $this->idSite1, $url . '?pk_campaign=test', $directReferrer],
             // campaigns, coming from different domain should have a keyword
-            array('example.org',     $this->idSite2, $url . '?pk_campaign=test', $externalReferrer),
+            ['example.org',     $this->idSite2, $url . '?pk_campaign=test', $externalReferrer],
             // campaign keyword is specifically set
-            array('campaignkey1',     $this->idSite2, $url . '?pk_campaign=test&mtm_keyword=campaignkey1', $externalReferrer),
-            array('campaignkey2',     $this->idSite2, $url . '?pk_campaign=test&utm_term=campaignkey2', $externalReferrer),
+            ['campaignkey1',     $this->idSite2, $url . '?pk_campaign=test&mtm_keyword=campaignkey1', $externalReferrer],
+            ['campaignkey2',     $this->idSite2, $url . '?pk_campaign=test&utm_term=campaignkey2', $externalReferrer],
 
             // search engine should have keyword the search term
-            array('piwik', $this->idSite2, $url, 'http://google.com/search?q=piwik'),
+            ['piwik', $this->idSite2, $url, 'http://google.com/search?q=piwik'],
 
             // site w/o url
-            array($noReferrerKeyword, $this->idSite3, $url, $directReferrer . '/'),
-        );
+            [$noReferrerKeyword, $this->idSite3, $url, $directReferrer . '/'],
+        ];
     }
 
     /**
      * @dataProvider getTestDataForOnExistingVisit
      */
-    public function test_onExistingVisit_shouldSometimesOverwriteReferrerInfo($expectedKeyword, $idSite, $url, $referrerUrl, $existingType)
+    public function testOnExistingVisitShouldSometimesOverwriteReferrerInfo($expectedKeyword, $idSite, $url, $referrerUrl, $existingType)
     {
-        $request = $this->getRequest(array('idsite' => $idSite, 'url' => $url, 'urlref' => $referrerUrl));
+        $request = $this->getRequest(['idsite' => $idSite, 'url' => $url, 'urlref' => $referrerUrl]);
         $visitor = $this->getNewVisitor();
-        $visitor->setVisitorColumn('referer_type', $existingType);
+        $visitor->previousVisitProperties->setProperty('referer_type', $existingType);
         $keyword = $this->keyword->onExistingVisit($request, $visitor, $action = null);
 
         $this->assertSame($expectedKeyword, $keyword);
@@ -142,7 +143,6 @@ class ReferrerKeywordTest extends IntegrationTestCase
 
     private function getNewVisitor()
     {
-        return new Visitor(new VisitProperties());
+        return new Visitor(new VisitProperties(), false, new VisitProperties());
     }
-
 }
