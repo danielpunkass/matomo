@@ -92,7 +92,7 @@ class FileIntegrity
 
             $directories = array();
             foreach ($directoriesFoundButNotExpected as $directoryFoundNotExpected) {
-                $directories[] = htmlspecialchars(realpath($directoryFoundNotExpected));
+                $directories[] = htmlspecialchars($directoryFoundNotExpected);
             }
 
             $deleteAllAtOnce = array();
@@ -138,7 +138,7 @@ class FileIntegrity
 
             $files = array();
             foreach ($filesFoundButNotExpected as $fileFoundNotExpected) {
-                $files[] = '"' . htmlspecialchars(realpath($fileFoundNotExpected)) . '"';
+                $files[] = '"' . htmlspecialchars($fileFoundNotExpected) . '"';
             }
 
             $deleteAllAtOnce = array();
