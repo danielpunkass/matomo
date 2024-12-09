@@ -71,7 +71,6 @@
         "OverviewPluginSubscriptions": "Eklenti aboneliklerinizin özeti",
         "OverviewPluginSubscriptionsAllDetails": "Tüm ayrıntıları görüntülemek ya da bir aboneliği değiştirmek için hesabınızla oturum açın.",
         "OverviewPluginSubscriptionsMissingInfo": "Bir abonelik eksik gibi görünüyor, örneğin bir ödeme henüz yapılmamış olabilir. Bir kaç saat sonra yeniden deneyin ya da Matomo ekibi ile görüşün.",
-        "OverviewPluginSubscriptionsMissingLicense": "Henüz bir lisans anahtarı belirtilmemiş. Bir eklenti aboneliği satın aldıysanız %1$sMağazaya gidin%2$s ve lisans anahtarınızı yazın.",
         "PaidPlugins": "Premium özellikler",
         "PluginDescription": "Mağazadan eklenti ve temalar indirerek Matomo uygulamasının özelliklerini artırabilirsiniz.",
         "PluginDownloadLinkMissingDescription": "%1$s eklentisinin indirme bağlantısı alınamadı. Eklentiyi mağazadan el ile kurmayı deneyin. %2$sAyrıntılı bilgi alın%3$s.",

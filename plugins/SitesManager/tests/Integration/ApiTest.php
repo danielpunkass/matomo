@@ -9,12 +9,14 @@
 
 namespace Piwik\Plugins\SitesManager\tests\Integration;
 
+use Piwik\Config;
 use Piwik\Container\StaticContainer;
 use Piwik\Option;
 use Piwik\Piwik;
 use Piwik\Plugin;
 use Piwik\Plugins\IntranetMeasurable\Type as IntranetType;
 use Piwik\Plugins\MobileAppMeasurable;
+use Piwik\Plugins\SitesManager\SitesManager;
 use Piwik\Plugins\WebsiteMeasurable\Type as WebsiteType;
 use Piwik\Plugins\SitesManager\API;
 use Piwik\Plugins\SitesManager\Model;
@@ -1614,7 +1616,167 @@ class ApiTest extends IntegrationTestCase
         $this->assertEquals('http://example.com/path', $excludedReferrers);
     }
 
+    /**
+     * @dataProvider getExclusionTypesAndExpectedResults
+     */
+    public function testGetExcludedQueryParametersGlobalShowsCorrectParamsDependingOnExclusionType($exclusionType, $expected): void
+    {
+        $this->setCommonPIIParamsInConfig(['common_one','common_two','common_three']);
 
+        Option::set(API::OPTION_EXCLUDE_TYPE_QUERY_PARAMS_GLOBAL, $exclusionType);
+        Option::set(API::OPTION_EXCLUDED_QUERY_PARAMETERS_GLOBAL, 'one,two');
+
+        $this->assertEquals(
+            $expected,
+            API::getInstance()->getExcludedQueryParametersGlobal()
+        );
+    }
+
+    public function getExclusionTypesAndExpectedResults(): \Generator
+    {
+        yield 'common session parameters' => ['common_session_parameters', ''];
+        yield 'matomo recommended PII' => ['matomo_recommended_pii', implode(',', ['common_one','common_two','common_three'])];
+        yield 'custom' => ['custom', 'one,two'];
+        yield 'empty exclusion type' => ['', 'one,two'];
+        yield 'false exclusion type' => [false, 'one,two'];
+    }
+
+    /**
+     * @dataProvider getExclusionTypesWithUrlParamsAndExpectedResults
+     */
+    public function testGetExclusionTypeForQueryParamsReturnsCorrectType($exclusionTypeSetting, string $excludedQueryParamsGlobal, string $expectedType): void
+    {
+        if ($exclusionTypeSetting === null) {
+            Option::delete(API::OPTION_EXCLUDE_TYPE_QUERY_PARAMS_GLOBAL);
+        } else {
+            Option::set(API::OPTION_EXCLUDE_TYPE_QUERY_PARAMS_GLOBAL, $exclusionTypeSetting);
+        }
+
+        Option::set(API::OPTION_EXCLUDED_QUERY_PARAMETERS_GLOBAL, $excludedQueryParamsGlobal);
+
+        $this->assertEquals(
+            $expectedType,
+            API::getInstance()->getExclusionTypeForQueryParams()
+        );
+    }
+
+    public function getExclusionTypesWithUrlParamsAndExpectedResults(): \Generator
+    {
+        yield 'option exists already in options store' => ['common_session_parameters', '', 'common_session_parameters'];
+        yield 'option doesnt exist and excluded query parameters has data' => [null, 'myapp_name,myapp_email', 'custom'];
+        yield 'option doesnt exist and excluded query parameters has no data' => [null, '', 'common_session_parameters'];
+    }
+
+    public function testSetGlobalQueryParamExclusionThrowsExceptionWhenInvalidExclusionTypeProvided(): void
+    {
+        $this->expectExceptionMessage('General_ValidatorErrorXNotWhitelisted');
+
+        Api::getInstance()->setGlobalQueryParamExclusion('invalid');
+    }
+
+    /**
+     * @dataProvider setGlobalQueryParamExclusionThrowsExceptionWhenQueryParametersNotPassedWhenCustomType
+     */
+    public function testSetGlobalQueryParamExclusionThrowsExceptionWhenQueryParametersNotPassedWhenCustomType(string $queryParameters): void
+    {
+        $this->expectExceptionMessage('SitesManager_ExceptionEmptyQueryParamsForCustomType');
+
+        Api::getInstance()->setGlobalQueryParamExclusion(
+            SitesManager::URL_PARAM_EXCLUSION_TYPE_NAME_CUSTOM,
+            $queryParameters
+        );
+    }
+
+    public function setGlobalQueryParamExclusionThrowsExceptionWhenQueryParametersNotPassedWhenCustomType(): \Generator
+    {
+        yield 'blank 0 length string' => [''];
+        yield 'string with just white space' => ['    '];
+        yield 'comma seperated with no values' => [',, ,,,'];
+    }
+
+    public function testSetGlobalQueryParamExclusionThrowsExceptionWhenQueryParametersPassedWhenNotCustomType(): void
+    {
+        $this->expectExceptionMessage('ExceptionNonEmptyQueryParamsForNonCustomType');
+
+        Api::getInstance()->setGlobalQueryParamExclusion(
+            SitesManager::URL_PARAM_EXCLUSION_TYPE_NAME_MATOMO_RECOMMENDED_PII,
+            'exclude_this'
+        );
+    }
+
+    public function testSetGlobalQueryParamExclusionDeletesSavedExclusionsWhenNotCustomType(): void
+    {
+        Option::set(API::OPTION_EXCLUDED_QUERY_PARAMETERS_GLOBAL, 'this_is_excluded_legacy');
+
+        Api::getInstance()->setGlobalQueryParamExclusion(
+            SitesManager::URL_PARAM_EXCLUSION_TYPE_NAME_COMMON_SESSION_PARAMETERS
+        );
+
+        $this->assertEmpty(Api::getInstance()->getExcludedQueryParametersGlobal());
+    }
+
+    /**
+     * @dataProvider setGlobalQueryParamExclusionPersistsSettingsSuccessfully
+     */
+    public function testSetGlobalQueryParamExclusionPersistsSettingsSuccessfully(
+        string $exclusionType,
+        ?string $excludedQueryParamsGlobal,
+        string $expectedQueryParamsGlobal,
+        string $expectedExclusionType
+    ): void {
+        $this->setCommonPIIParamsInConfig(['common_one','common_two','common_three']);
+        Api::getInstance()->setGlobalQueryParamExclusion(
+            $exclusionType,
+            $excludedQueryParamsGlobal
+        );
+
+        $this->assertEquals(
+            $expectedQueryParamsGlobal,
+            Api::getInstance()->getExcludedQueryParametersGlobal()
+        );
+        $this->assertEquals(
+            $expectedExclusionType,
+            Api::getInstance()->getExclusionTypeForQueryParams()
+        );
+    }
+
+    public function setGlobalQueryParamExclusionPersistsSettingsSuccessfully(): \Generator
+    {
+        yield 'common session parameters' => ['common_session_parameters', null, '', 'common_session_parameters'];
+        yield 'matomo recommended pii' => [
+            'matomo_recommended_pii',
+            null,
+            implode(',', ['common_one','common_two','common_three']),
+            'matomo_recommended_pii'
+        ];
+        yield 'custom' => ['custom', 'one,two', 'one,two', 'custom'];
+    }
+
+    /**
+     * @dataProvider deprecatedSetGlobalExcludedQueryParametersShouldReturnExpectedParameters
+     */
+    public function testDeprecatedSetGlobalExcludedQueryParametersShouldReturnExpectedParameters(string $excludedParameters, string $expectedExclusionType): void
+    {
+        Api::getInstance()->setGlobalExcludedQueryParameters($excludedParameters);
+
+        $this->assertEquals($excludedParameters, Api::getInstance()->getExcludedQueryParametersGlobal());
+        $this->assertEquals($expectedExclusionType, Api::getInstance()->getExclusionTypeForQueryParams());
+    }
+
+    public function deprecatedSetGlobalExcludedQueryParametersShouldReturnExpectedParameters(): \Generator
+    {
+        yield 'non empty list of exclusions' => ['one,two,three', 'custom'];
+        yield 'empty list of exclusions' => ['', 'common_session_parameters'];
+    }
+
+    private function setCommonPIIParamsInConfig(array $urlParams): void
+    {
+        $config = Config::getInstance();
+        $sitesManager = $config->SitesManager;
+        $sitesManager['CommonPIIParams'] = $urlParams;
+        $config->SitesManager = $sitesManager;
+        $config->forceSave();
+    }
 
     public function provideContainerConfig()
     {

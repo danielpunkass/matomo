@@ -94,7 +94,7 @@ class PasswordResetter
      *
      * @var string
      */
-    private $cancelResetPasswordAction = "cancelResetPassword";
+    private $cancelResetPasswordAction = "initiateCancelResetPassword";
 
     /**
      * The name to use in the From: part of the confirm password reset email.

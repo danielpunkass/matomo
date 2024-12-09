@@ -83,6 +83,20 @@
         "CancelPasswordResetRequestRemoved": "The request has been removed",
         "CancelPasswordResetRequestRemovedMessage": "We have recorded that you did not request this password reset. The reset request has been removed, and no changes have been made to your account.",
         "CancelPasswordResetSecurityTip": "For added protection, we recommend enabling two-factor authentication (2FA).",
-        "SecurityTip": "Security Tip"
+        "SecurityTip": "Security Tip",
+        "LoginFromDifferentCountryEmailSubject": "Unusual login activity detected on your Matomo account",
+        "LoginFromDifferentCountryEmail1": "We’ve detected a login to your Matomo account from a location that is different from your previous login area.",
+        "LoginFromDifferentCountryEmail2": "Login details:",
+        "LoginFromDifferentCountryEmail3": "If this was you, no action is needed. If you did not recognise this login attempt, please take the following steps to secure your account:",
+        "LoginFromDifferentCountryEmail4": "Reset your password:",
+        "LoginFromDifferentCountryEmail5": "Enable Two-Factor Authentication (2FA) for additional security:",
+        "LoginFromDifferentCountryEmail6": "We also recommend reviewing your recent account activity to ensure there are no other unauthorised actions.",
+        "LoginFromDifferentCountryEmailLinkResetPassword": "Reset your password",
+        "LoginFromDifferentCountryEmailLinkEnable2FA": "Enable 2FA",
+        "TimeOfLogin": "Time of login",
+        "PasswordResetCancelConfirmTitle": "Password reset cancellation",
+        "PasswordResetCancelConfirm": "Confirm password reset cancellation",
+        "PasswordResetCancelConfirmDescription": "You've requested to cancel your password reset. Please confirm your choice to ensure your request is processed. If this was not your intention, you can safely close this page.",
+        "PasswordResetCancelTokenIssue": "We noticed you tried to cancel your password reset request. Unfortunately, this link is no longer valid because it has either expired, is invalid or has been used already."
     }
 }

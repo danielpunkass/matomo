@@ -346,6 +346,7 @@ describe("UIIntegrationTest", function () { // TODO: Rename to Piwik?
         it('should load the actions > site search page correctly', async function () {
             await page.goto("?" + urlBase + "#?" + generalParams + "&category=General_Actions&subcategory=Actions_SubmenuSitesearch");
             await page.waitForNetworkIdle();
+            await page.waitForTimeout(150);
 
             expect(await screenshotPageWrap()).to.matchImage('actions_site_search');
         });

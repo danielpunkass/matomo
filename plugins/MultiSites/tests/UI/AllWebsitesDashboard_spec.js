@@ -103,6 +103,45 @@ describe('AllWebsitesDashboard', function () {
 
             expect(await page.screenshotSelector('#main')).to.matchImage('no_sparklines');
         });
+
+        it('should correctly display a KPI badge when added through event', async function () {
+            await page.goto(dashboardUrl);
+            await page.waitForNetworkIdle();
+
+            await page.evaluate(() => {
+              window.CoreHome.Matomo.on('MultiSites.DashboardKPIs.updated', function(data) {
+                  data.kpis.badges.hits = '<strong>Plan:</strong> 600K hits/month';
+              })
+            });
+
+            // change period to trigger reload of KPIS
+            await page.click('.move-period-prev');
+            await page.click('.move-period-next');
+            await page.waitForNetworkIdle();
+
+            expect(await page.screenshotSelector('#main')).to.matchImage('dashboard_kpi_badge');
+        });
+
+        it('should correctly display all badges when added through event', async function () {
+            await page.goto(dashboardUrl);
+            await page.waitForNetworkIdle();
+
+            await page.evaluate(() => {
+              window.CoreHome.Matomo.on('MultiSites.DashboardKPIs.updated', function(data) {
+                  data.kpis.badges.hits = '<strong>Plan:</strong> 600K hits/month';
+                  data.kpis.badges.pageviews = 'Weird Pageview Badge';
+                  data.kpis.badges.revenue = 'Awesome Revenue Badge';
+                  data.kpis.badges.visits = 'Terrific Visits Badge';
+              })
+            });
+
+            // change period to trigger reload of KPIS
+            await page.click('.move-period-prev');
+            await page.click('.move-period-next');
+            await page.waitForNetworkIdle();
+
+            expect(await page.screenshotSelector('#main')).to.matchImage('dashboard_all_badges');
+        });
     });
 
     describe('Dashboard Controls', function () {
@@ -191,6 +230,8 @@ describe('AllWebsitesDashboard', function () {
 
             expect(await getSitesTableCell(1, 1)).to.equal('Site 1');
             expect(await getSitesTableCell(1, 2)).to.equal('2');
+            expect(await getSitesTableCell(2, 1)).to.equal('Site 2');
+            expect(await getSitesTableCell(2, 2)).to.equal('1');
 
             // reverse default "visits" sorting
             await page.click('.sitesTableSort.sitesTableSortDesc');
@@ -221,19 +262,21 @@ describe('AllWebsitesDashboard', function () {
         });
 
         it('should allow sorting by other metrics', async function () {
-            // sort by "pageviews"
-            await page.click('.sitesTable th:nth-child(3)');
+            // sort by "hits"
+            await page.click('.sitesTable th:nth-child(4)');
             await page.waitForNetworkIdle();
 
             expect(await getSitesTableCell(1, 1)).to.equal('Site 1');
-            expect(await getSitesTableCell(1, 3)).to.equal('3');
+            expect(await getSitesTableCell(1, 4)).to.equal('4');
+            expect(await getSitesTableCell(2, 1)).to.equal('Site 3');
+            expect(await getSitesTableCell(2, 4)).to.equal('4');
 
             // reverse sorting
-            await page.click('.sitesTable th:nth-child(3)');
+            await page.click('.sitesTable th:nth-child(4)');
             await page.waitForNetworkIdle();
 
             expect(await getSitesTableCell(1, 1)).to.not.equal('Site 1');
-            expect(await getSitesTableCell(1, 3)).to.equal('0');
+            expect(await getSitesTableCell(1, 4)).to.equal('0');
         });
 
         it('should allow changing the evolution metric', async function () {

@@ -148,17 +148,27 @@ describe('ResetPassword', function () {
             expect(messageText).to.match(/Open the confirmation link sent to your e-mail inbox to confirm changing your password/i);
         });
 
-        it('should show confirmation page when "was not me" link is clicked', async function () {
-            const cancelUrl = await readLinkFromPasswordResetMail('cancelResetPassword');
+        it('should show initiate cancel confirmation page when "was not me" link is clicked', async function () {
+            const cancelUrl = await readLinkFromPasswordResetMail('initiateCancelResetPassword');
 
             await page.goto(cancelUrl);
             await page.waitForNetworkIdle();
 
+            expect(await page.screenshot({ fullPage: true })).to.matchImage('confirm_cancel');
+        });
+
+        it('should show confirmation page when "was not me" link is clicked and continue is clicked', async function () {
+            const cancelUrl = await readLinkFromPasswordResetMail('initiateCancelResetPassword');
+
+            await page.goto(cancelUrl);
+            await page.waitForNetworkIdle();
+
+            await page.click('#confirm-cancel-reset-password');
             expect(await page.screenshot({ fullPage: true })).to.matchImage('cancel');
         });
 
         it('should show an error message if an outdated password reset token is used', async function () {
-            const cancelUrl = await readLinkFromPasswordResetMail('cancelResetPassword');
+            const cancelUrl = await readLinkFromPasswordResetMail('initiateCancelResetPassword');
 
             await page.goto(cancelUrl);
             await page.waitForNetworkIdle();
@@ -166,7 +176,7 @@ describe('ResetPassword', function () {
             const notification = await page.$('.notification-error .notification-body');
             const notificationText = await notification.getProperty('textContent');
 
-            expect(notificationText).to.match(/The token is invalid or has expired/i);
+            expect(notificationText).to.match(/We noticed you tried to cancel your password reset request. Unfortunately, this link is no longer valid because it has either expired, is invalid or has been used already./i);
         });
     });
 });

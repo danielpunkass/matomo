@@ -1,3 +1,25 @@
+#awd .top_controls {
+  margin: 12px 3px 6px;
+  padding: 0;
+
+  @media all and (max-width: 1200px) {
+    margin: 12px 5px 6px;
+  }
+
+  @media all and (max-width: 600px) { /* 1120px + padding */
+    min-height: auto;
+
+    .piwikTopControl {
+      margin: 0 !important;
+    }
+  }
+
+  .row {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+}
+
 #multisitesAllWebsitesDashboard {
   .widgetized & {
     // required for widgetized display

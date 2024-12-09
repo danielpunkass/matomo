@@ -42,6 +42,7 @@ use Piwik\View;
 class Controller extends \Piwik\Plugin\ControllerAdmin
 {
     public const NONCE_CONFIRMRESETPASSWORD = 'loginConfirmResetPassword';
+    public const NONCE_CONFIRMCANCELRESETPASSWORD = 'loginConfirmCancelResetPassword';
 
     /**
      * @var PasswordResetter
@@ -441,6 +442,34 @@ class Controller extends \Piwik\Plugin\ControllerAdmin
         return null;
     }
 
+    public function initiateCancelResetPassword(): string
+    {
+        if (!Url::isValidHost()) {
+            throw new Exception("Cannot invalidate reset password token with untrusted hostname!");
+        }
+
+        $request = Request::fromRequest();
+        $login = $request->getStringParameter('login');
+        $resetToken = $request->getStringParameter('resetToken');
+        $errorMessage = '';
+
+        try {
+            $this->passwordResetter->checkValidConfirmPasswordToken($login, $resetToken);
+        } catch (Exception $ex) {
+            $errorMessage = $ex->getMessage();
+        }
+
+        $nonce = Nonce::getNonce(self::NONCE_CONFIRMCANCELRESETPASSWORD);
+
+        return $this->renderTemplateAs('@Login/initiateCancelResetPassword', [
+            'nonce'        => $nonce,
+            'errorMessage' => $errorMessage,
+            'loginPlugin' => Piwik::getLoginPluginName(),
+            'login' => $login,
+            'resetToken' => $resetToken
+        ], 'basic');
+    }
+
     /**
      * Password reset cancel action. Invalidates a password reset token.
      * Users visit this action from a link supplied in an email.
@@ -456,6 +485,7 @@ class Controller extends \Piwik\Plugin\ControllerAdmin
         $resetToken = $request->getStringParameter('resetToken');
 
         try {
+            Nonce::checkNonce(self::NONCE_CONFIRMCANCELRESETPASSWORD);
             $this->passwordResetter->cancelPasswordResetProcess($login, $resetToken);
         } catch (Exception $ex) {
             Log::debug($ex);

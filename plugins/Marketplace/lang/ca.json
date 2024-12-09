@@ -71,7 +71,6 @@
         "OverviewPluginSubscriptions": "Visió general de les vostres subscripcions de connectors",
         "OverviewPluginSubscriptionsAllDetails": "Per veure'n tots els detalls o per canviar una subscripció, inicieu sessió al vostre compte.",
         "OverviewPluginSubscriptionsMissingInfo": "És possible que falti una subscripció, per exemple, si encara no s'ha fet un pagament. En aquest cas, torneu-ho a provar d'aquí a unes hores o poseu-vos en contacte amb l'equip de Matomo.",
-        "OverviewPluginSubscriptionsMissingLicense": "No teniu una clau de llicència definida. Si heu comprat una subscripció al connector, aneu al %1$sMarketplace%2$s i introduïu la vostra clau de llicència.",
         "PaidPlugins": "Funcions Premium",
         "PluginDescription": "Amplieu i amplieu la funcionalitat de Matomo descarregant connectors i temes del Marketplace.",
         "PluginDownloadLinkMissingDescription": "No es pot obtenir l'enllaç de descàrrega del connector %1$s, proveu d'instal·lar el connector manualment des del mercat. %2$sMés informació%3$s.",
