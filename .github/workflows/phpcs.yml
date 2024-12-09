@@ -1,8 +1,11 @@
 name: PHPCS check
 
-on: 
+on:
+  push:
+    branches: [main]
   pull_request:
-  workflow_dispatch:
+    branches: [main]
+  workflow_dispatch:  # Allows manual triggering
 
 permissions:
   actions: read
