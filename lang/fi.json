@@ -42,7 +42,7 @@
         "ColumnAverageGenerationTime": "Keskimääräinen generointiin tarvittu aika",
         "ColumnAverageGenerationTimeDocumentation": "Keskimääräinen sivun lataamiseen tarvittu aika. Tämä arvo sisältää ajan, joka palvelimelta kului verkkosivun lataamiseen, sekä ajan, jonka kävijä tarvisti sivun lataamiseen palvelimelta. Mitä alhaisempi keskivertoaika, sitä nopeampi verkkosivusi on kävijöillesi!",
         "ColumnAverageTimeOnPage": "Keskimääräinen aika sivulla",
-        "ColumnAverageTimeOnPageDocumentation": "Keskimääräinen aika tällä sivulla (vain tämä sivu, ei koko sivusto)",
+        "ColumnAverageTimeOnPageDocumentation": "Keskimääräinen aika, jonka vierailijat viettivät tällä sivulla (vain sivu, ei koko verkkosivusto).",
         "ColumnAvgTimeOnSite": "Keskimääräinen aika sivustolla",
         "ColumnAvgTimeOnSiteDocumentation": "Käynnin keskimääräinen kesto.",
         "ColumnBounceRate": "Lähtemissuhde",
@@ -604,7 +604,7 @@
     },
     "RowEvolution": {
         "AvailableMetrics": "Saatavilla olevat metriikat",
-        "CompareDocumentation": "Klikkaa alla olevaa linkkiä ja avaa tämä ikkuna toiselle riville samasta taulukosta.<br/>Käytä shift+hiiren klikkausta, jos haluat merkitä rivin vertailuun ilman tämän ikkunan avaamista.",
+        "CompareDocumentation": "Napsauta alla olevaa linkkiä ja avaa tämä ponnahdusikkuna toiselle riville samasta taulukosta vertaillaksesi useita tietueita.<br> Merkitse rivi vertailua varten avaamatta tätä ponnahdusikkunaa painamalla Shift-klikkaa.",
         "CompareRows": "Vertaile tietoja",
         "ComparingRecords": "Vertaillaan %s riviä",
         "Documentation": "Klikkaa mittaria, jonka haluat nähdä suuressa seurantakuvaajassa. Vaihto + klikkaus valitsee kerralla useita mittareita.",

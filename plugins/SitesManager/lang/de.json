@@ -54,7 +54,7 @@
         "GlobalExcludedUserAgentHelp2": "Dies kann benutzt werden um Bots vom Tracking auszuschließen.",
         "GlobalExcludedUserAgentHelp3": "Reguläre Ausdrücke wie %s werden unterstützt.",
         "GlobalListExcludedIps": "Globale Liste ignorierter IPs",
-        "GlobalListExcludedQueryParameters": "Globale Liste von GET-Parametern, die ignoriert werden",
+        "GlobalListExcludedQueryParameters": "Globale Liste von auszuschließenden URL-Abfrageparametern",
         "GlobalListExcludedReferrers": "Globale Liste der ausgeschlossenen Verweise",
         "GlobalListExcludedReferrersDesc": "Die unten aufgeführten Hostnamen und URLs werden von der Verweiserkennung ausgeschlossen.",
         "GlobalListExcludedUserAgents": "Globale Liste aller ausgeschlossenen Browser Agenten",

@@ -23,6 +23,11 @@ on:
         type: string
         required: false
         default: ''
+    secrets:
+      ARTIFACTS_PASS:
+        required: false
+      TESTOMATIO_INTEGRATION:
+        required: false
 
 permissions:
   actions: read
